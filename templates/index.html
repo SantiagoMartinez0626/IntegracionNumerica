@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integración Numérica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="bg-gray-100 font-sans">
+    <header class="bg-blue-600 text-white py-6 text-center">
+        <h1 class="text-3xl font-bold">Calculadora de Integración Numérica</h1>
+        <p class="mt-2 text-lg">Aplica métodos numéricos como Trapecio, Simpson, Romberg y Cuadratura para resolver integrales.</p>
+    </header>
+
+    <div class="container mx-auto px-4">
+        <div class="flex justify-center border-b border-gray-300 mb-4">
+            <button class="tab-link px-4 py-2 font-medium text-gray-700 hover:text-blue-600 focus:outline-none {% if request.path == '/' or request.path == '/trapecio' %}border-b-2 border-blue-600 text-blue-600{% endif %}" onclick="window.location.href='/'">Trapecio</button>
+            <button class="tab-link px-4 py-2 font-medium text-gray-700 hover:text-blue-600 focus:outline-none {% if request.path == '/simpson' %}border-b-2 border-blue-600 text-blue-600{% endif %}" onclick="window.location.href='/simpson'">Simpson</button>
+            <button class="tab-link px-4 py-2 font-medium text-gray-700 hover:text-blue-600 focus:outline-none {% if request.path == '/romberg' %}border-b-2 border-blue-600 text-blue-600{% endif %}" onclick="window.location.href='/romberg'">Romberg</button>
+            <button class="tab-link px-4 py-2 font-medium text-gray-700 hover:text-blue-600 focus:outline-none {% if request.path == '/cuadratura' %}border-b-2 border-blue-600 text-blue-600{% endif %}" onclick="window.location.href='/cuadratura'">Cuadratura</button>
+        </div>
+
+        <div class="content flex flex-col md:flex-row gap-6 mb-6">
+            <div class="md:w-1/2 w-full">
+                {% if request.path == '/' or request.path == '/trapecio' %}
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Método del Trapecio</h2>
+                        <form method="post" action="/">
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="funcion" class="block text-sm font-medium text-gray-700">Función (en x):</label>
+                                    <input type="text" name="funcion" value="{{ request.form.get('funcion', 'x**2') }}"
+                                           class="mt-1 w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label for="a" class="block text-sm font-medium text-gray-700">Límite inferior (a):</label>
+                                    <input type="text" name="a" value="{{ request.form.get('a', '0') }}"
+                                           class="mt-1 w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label for="b" class="block text-sm font-medium text-gray-700">Límite superior (b):</label>
+                                    <input type="text" name="b" value="{{ request.form.get('b', '1') }}"
+                                           class="mt-1 w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label for="n" class="block text-sm font-medium text-gray-700">Número de subintervalos (n):</label>
+                                    <input type="text" name="n" value="{{ request.form.get('n', '10') }}"
+                                           class="mt-1 w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div class="text-center">
+                                    <input type="submit" value="Calcular"
+                                           class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 cursor-pointer transition duration-200">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                {% elif request.path == '/simpson' %}
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Método de Simpson</h2>
+                        <form method="post" action="/simpson">
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="funcion" class="block text-sm font-medium text-gray-700">Función (en x):</label>
+                                    <input type="text" name="funcion" value="{{ request.form.get('funcion', 'x**2') }}"
+                                           class="mt-1 w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label for="a" class="block text-sm font-medium text-gray-700">Límite inferior (a):</label>
+                                    <input type="text" name="a" value="{{ request.form.get('a', '0') }}"
+                                           class="mt-1 w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label for="b" class="block text-sm font-medium text-gray-700">Límite superior (b):</label>
+                                    <input type="text" name="b" value="{{ request.form.get('b', '1') }}"
+                                           class="mt-1 w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label for="n" class="block text-sm font-medium text-gray-700">Número de subintervalos (n):</label>
+                                    <input type="text" name="n" value="{{ request.form.get('n', '10') }}"
+                                           class="mt-1 w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div class="text-center">
+                                    <input type="submit" value="Calcular"
+                                           class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 cursor-pointer transition duration-200">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                {% elif request.path == '/romberg' %}
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Método de Romberg</h2>
+                        <form method="post" action="/romberg">
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="funcion" class="block text-sm font-medium text-gray-700">Función (en x):</label>
+                                    <input type="text" name="funcion" value="{{ request.form.get('funcion', 'x**2') }}"
+                                           class="mt-1 w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label for="a" class="block text-sm font-medium text-gray-700">Límite inferior (a):</label>
+                                    <input type="text" name="a" value="{{ request.form.get('a', '0') }}"
+                                           class="mt-1 w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label for="b" class="block text-sm font-medium text-gray-700">Límite superior (b):</label>
+                                    <input type="text" name="b" value="{{ request.form.get('b', '1') }}"
+                                           class="mt-1 w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div class="text-center">
+                                    <input type="submit" value="Calcular"
+                                           class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 cursor-pointer transition duration-200">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                {% elif request.path == '/cuadratura' %}
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Método de Cuadratura</h2>
+                        <form method="post" action="/cuadratura">
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="funcion" class="block text-sm font-medium text-gray-700">Función (en x):</label>
+                                    <input type="text" name="funcion" value="{{ request.form.get('funcion', 'x**2') }}"
+                                           class="mt-1 w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label for="a" class="block text-sm font-medium text-gray-700">Límite inferior (a):</label>
+                                    <input type="text" name="a" value="{{ request.form.get('a', '0') }}"
+                                           class="mt-1 w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label for="b" class="block text-sm font-medium text-gray-700">Límite superior (b):</label>
+                                    <input type="text" name="b" value="{{ request.form.get('b', '1') }}"
+                                           class="mt-1 w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label for="n" class="block text-sm font-medium text-gray-700">Número de subintervalos (n):</label>
+                                    <input type="text" name="n" value="{{ request.form.get('n', '10') }}"
+                                           class="mt-1 w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <div class="text-center">
+                                    <input type="submit" value="Calcular"
+                                           class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 cursor-pointer transition duration-200">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="md:w-1/2 w-full">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Resultado:</h3>
+                    {% if resultado is not none %}
+                        <div class="result-box bg-green-100 p-4 rounded-lg mb-4">
+                            <p class="text-green-800 font-medium text-lg">
+                                {% if resultado is string %}
+                                    {{ resultado }}
+                                {% else %}
+                                    {{ "%.6f"|format(resultado) }}
+                                {% endif %}
+                            </p>
+                        </div>
+                        {% if plot_url %}
+                        <div class="graph-container mt-4">
+                            <img src="data:image/png;base64,{{ plot_url }}" alt="Gráfica de la integración" class="w-full">
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 text-white text-center py-4">
+        <p>© 2025 Calculadora de Integración Numérica. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+</body>
+</html>
