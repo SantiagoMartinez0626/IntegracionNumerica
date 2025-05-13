@@ -1,0 +1,6 @@
+services:
+  integracion:
+    build: .
+    container_name: integracion_numerica
+    ports:
+      - "80:80"
